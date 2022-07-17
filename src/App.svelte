@@ -55,11 +55,10 @@
       left: 0;
       width: 100%;
       height: 100%;
+      overflow: hidden;
 
       img {
-        min-height: 100%;
-        min-width: 100%;
-
+        width: 100%;
         opacity: 0;
         transition: 500ms ease;
 
