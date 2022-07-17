@@ -54,11 +54,8 @@ async function fetchMovies(): Promise<Movies> {
 
   // Return cached response if it is not expired
   if (cachedResponse[0] != undefined && cachedResponse[1] > maxDate) {
-    console.log("Returning cached response");
     return cachedResponse[0];
   }
-
-  console.log("Fetching movies");
 
   // Fetch new response
   const response = await fetch(
