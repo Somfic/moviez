@@ -2,6 +2,8 @@
   import { MediaType, Showing } from "../scripts/models/movies";
   export let showing: Showing;
   const cdn = "https://cdn.kinepolis.nl/images";
+
+  const pad = (num, size) => String(num).padStart(size, "0");
 </script>
 
 <div class="showing">
@@ -20,9 +22,10 @@
     <div class="sessions">
       {#each showing.sessions as session}
         <p class="time info-item">
-          {session.showtime.getHours().toPrecision(2)}:{session.showtime
-            .getMinutes()
-            .toPrecision(2)}
+          {pad(session.showtime.getHours(), 2)}:{pad(
+            session.showtime.getMinutes(),
+            2
+          )}
         </p>
       {/each}
     </div>
