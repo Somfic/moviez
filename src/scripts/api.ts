@@ -17,7 +17,7 @@ export async function fetchShowings(): Promise<Showing[]> {
 	const midnight = new Date(
 		now.getFullYear(),
 		now.getMonth(),
-		now.getDate() + 2
+		now.getDate() + 1
 	);
 
 	// Filter showings that are today
