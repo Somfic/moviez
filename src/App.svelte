@@ -2,7 +2,6 @@
 	import { size } from "./scripts/store";
 	import { onMount } from "svelte";
 	import { default as ShowingComponent } from "./components/Showing.svelte";
-	import "./scripts/responsive.ts";
 	import { fetchShowings } from "./scripts/api";
 	import { MediaType, Showing } from "./scripts/models/movies";
 	import Responsive from "./components/Responsive.svelte";
