@@ -20,7 +20,8 @@ body {
   flex-direction: column;
 }
 
-main {
+#root {
   flex-grow: 1;
   background-color: black;
+  color: white;
 }
