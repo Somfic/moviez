@@ -8,10 +8,6 @@ interface IProps {
 }
 
 export default class ShowingScroller extends React.Component<IProps> {
-	constructor(props: IProps) {
-		super(props);
-	}
-
 	render() {
 		return (
 			<>

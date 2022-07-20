@@ -5,10 +5,6 @@ interface IProps {
 }
 
 export default class Time extends React.Component<IProps> {
-	constructor(props: IProps) {
-		super(props);
-	}
-
 	render() {
 		const pad = (num: number, size: number) => String(num).padStart(size, "0");
 

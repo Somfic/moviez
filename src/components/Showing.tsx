@@ -8,10 +8,6 @@ interface IProps {
 }
 
 export default class Showing extends React.Component<IProps> {
-	constructor(props: IProps) {
-		super(props);
-	}
-
 	render() {
 		const image =
 			"https://cdn.kinepolis.nl/images" +
