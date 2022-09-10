@@ -1,72 +1,40 @@
-import {
-	ComplexOperator,
-	MoviesConverter,
-	Movies,
-	Session,
-	Film,
-	Showing,
-} from "./models/movies";
+import { Models } from "./models";
 
-let cachedResponse: [Movies | undefined, Date] = [undefined, new Date(0)];
+let cachedResponse: [Models.Movies | undefined, Date] = [undefined, new Date(0)];
 const cacheDuration = 10; // seconds
 
-export async function fetchShowings(): Promise<Showing[]> {
-	const movies = await fetchMovies();
+export async function fetchShowings(): Promise<Models.Showing[]> {
+    const movies = await fetchMovies();
 
-	const now = new Date(Date.now());
-	const midnight = new Date(
-		now.getFullYear(),
-		now.getMonth(),
-		now.getDate() + 1
-	);
+    const today = new Date(Date.now());
+    const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
 
-	// Filter showings that are today
-	const validSessions = movies.sessions.filter(
-		(s) =>
-			s.complexOperator == ComplexOperator.Dord &&
-			s.showtime > now &&
-			s.showtime < midnight
-	);
+    // Filter showings that are today
+    const validSessions = movies.sessions.filter((s) => s.complexOperator === Models.ComplexOperator.Dord && new Date(s.showtime) > today && new Date(s.showtime) < tomorrow);
+    // Get the unique IDs of the movies that are playing
+    const filmIds = new Set(validSessions.map((f) => f.film.id));
 
-	// Get the ID of the movies that are playing
-	const films = validSessions
-		.map((s) => s.film.id)
-		.reduce((a, b) => {
-			if (a.indexOf(b) < 0) a.push(b);
-			return a;
-		}, []);
+    // Group sessions by film
+    let showings: Models.Showing[] = [];
+    filmIds.forEach((filmId) => {
+        const film = movies.films.find((f) => f.id === filmId);
+        const sessions = validSessions.filter((s) => s.film.id === filmId).sort((a, b) => new Date(a.showtime).getTime() - new Date(b.showtime).getTime());
+        showings.push({ film: film!, sessions: sessions });
+    });
 
-	let showings: Showing[] = [];
-
-	films.forEach((filmId) => {
-		const film = movies.films.find((f) => f.id == filmId);
-		const sessions = validSessions
-			.filter((s) => s.film.id == filmId)
-			.sort((a, b) => a.showtime.getTime() - b.showtime.getTime());
-		showings.push(new Showing(film, sessions));
-	});
-
-	return showings;
+    return showings;
 }
 
-async function fetchMovies(): Promise<Movies> {
-	let maxDate = new Date(Date.now() - cacheDuration * 1000);
+async function fetchMovies(): Promise<Models.Movies> {
+    let maxDate = new Date(Date.now() - cacheDuration * 1000);
 
-	// Return cached response if it is not expired
-	if (cachedResponse[0] != undefined && cachedResponse[1] > maxDate) {
-		return cachedResponse[0];
-	}
+    // Return cached response if it has not expired
+    if (cachedResponse[0] !== undefined && cachedResponse[1] > maxDate) {
+        return cachedResponse[0];
+    }
 
-	// Fetch new response
-	const response = await fetch(
-		"https://kinepolisweb-programmation.kinepolis.com/api//Programmation/NL/NL/www/Cinema/KinepolisTheNetherlands"
-	);
+    // Fetch new response
+    const response = await fetch("https://kinepolisweb-programmation.kinepolis.com/api/Programmation/NL/NL/www/Cinema/KinepolisTheNetherlands");
 
-	const body = await response.json();
-	const json = JSON.stringify(body);
-	const movies = MoviesConverter.fromJson(json);
-
-	cachedResponse = [movies, new Date(Date.now())];
-
-	return movies;
+    return await response.json();
 }
